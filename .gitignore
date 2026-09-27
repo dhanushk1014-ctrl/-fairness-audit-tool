@@ -1,0 +1,14 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.log
+
+# Node / React
+node_modules/
+dist/
+frontend/.vite/
+
+# Editor
+.vscode/
+.DS_Store
