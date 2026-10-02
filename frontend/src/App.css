@@ -79,6 +79,41 @@ body {
   font-size: 14px;
 }
 
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.results-title {
+  font-size: 18px;
+  margin: 0;
+}
+
+.download-btn {
+  background: white;
+  color: #4f46e5;
+  border: 1.5px solid #4f46e5;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.download-btn:hover:not(:disabled) {
+  background: #f0f0fb;
+}
+
+.download-btn:disabled {
+  color: #a5a3f0;
+  border-color: #d6d5f5;
+  cursor: not-allowed;
+}
+
 .summary-row {
   display: flex;
   gap: 16px;

@@ -10,6 +10,7 @@ const API_BASE = "http://127.0.0.1:8000";
 function App() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [error, setError] = useState(null);
   const [analyzeResult, setAnalyzeResult] = useState(null);
   const [explainResult, setExplainResult] = useState(null);
@@ -53,6 +54,42 @@ function App() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const downloadReport = async () => {
+    if (!file) return;
+    setDownloadingPdf(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(`${API_BASE}/report`, { method: "POST", body: formData });
+      if (!res.ok) {
+        const errBody = await res.json();
+        throw new Error(errBody.detail || "Could not generate the PDF report.");
+      }
+
+      // Trigger a browser download without navigating away from the page
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "fairness_audit_report.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(
+        err.message.includes("Failed to fetch")
+          ? "Could not reach the backend. Is your FastAPI server running on port 8000?"
+          : err.message
+      );
+    } finally {
+      setDownloadingPdf(false);
     }
   };
 
@@ -105,6 +142,17 @@ function App() {
 
       {analyzeResult && (
         <section className="results">
+          <div className="results-header">
+            <h2 className="results-title">Audit Results</h2>
+            <button
+              onClick={downloadReport}
+              disabled={downloadingPdf}
+              className="download-btn"
+            >
+              {downloadingPdf ? "Generating PDF…" : "Download PDF Report"}
+            </button>
+          </div>
+
           <div className="summary-row">
             <div className="stat-card">
               <span className="stat-label">Overall Accuracy</span>
